@@ -31,19 +31,19 @@
 
   <PropertyGroup Condition="'$(DefaultLinkage)' == 'dynamic'">
     <Linkage-zlabs>dynamic</Linkage-zlabs>
-    <Linkage-czmq>dynamic</Linkage-czmq>
+    <Linkage-libczmq>dynamic</Linkage-libczmq>
     <Linkage-libzmq>dynamic</Linkage-libzmq>
     <Linkage-libsodium>dynamic</Linkage-libsodium>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DefaultLinkage)' == 'ltcg'">
     <Linkage-zlabs>ltcg</Linkage-zlabs>
-    <Linkage-czmq>ltcg</Linkage-czmq>
+    <Linkage-libczmq>ltcg</Linkage-libczmq>
     <Linkage-libzmq>ltcg</Linkage-libzmq>
     <Linkage-libsodium>ltcg</Linkage-libsodium>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DefaultLinkage)' == 'static'">
     <Linkage-zlabs>static</Linkage-zlabs>
-    <Linkage-czmq>static</Linkage-czmq>
+    <Linkage-libczmq>static</Linkage-libczmq>
     <Linkage-libzmq>static</Linkage-libzmq>
     <Linkage-libsodium>static</Linkage-libsodium>
   </PropertyGroup>
@@ -52,7 +52,7 @@
 
   <Target Name="LinkageInfo" BeforeTargets="PrepareForBuild">
     <Message Text="Linkage-zlabs     : $(Linkage-zlabs)" Importance="high"/>
-    <Message Text="Linkage-czmq      : $(Linkage-czmq)" Importance="high"/>
+    <Message Text="Linkage-libczmq      : $(Linkage-libczmq)" Importance="high"/>
     <Message Text="Linkage-libzmq    : $(Linkage-libzmq)" Importance="high"/>
     <Message Text="Linkage-libsodium : $(Linkage-libsodium)" Importance="high"/>
   </Target>

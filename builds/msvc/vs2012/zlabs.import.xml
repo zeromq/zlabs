@@ -7,7 +7,7 @@
     <Rule.DataSource>
       <DataSource Persistence="ProjectFile" ItemType="" />
     </Rule.DataSource>
-    <EnumProperty Name="Linkage-zlabs" DisplayName="Linkage" Description="How zlabs will be linked into the output of this project" Category="czmq">
+    <EnumProperty Name="Linkage-zlabs" DisplayName="Linkage" Description="How zlabs will be linked into the output of this project" Category="zlabs">
       <EnumValue Name="" DisplayName="Not linked" />
       <EnumValue Name="dynamic" DisplayName="Dynamic (DLL)" />
       <EnumValue Name="static" DisplayName="Static (LIB)" />
