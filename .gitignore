@@ -41,7 +41,7 @@ config.status
 configure
 libtool
 test-suite.log
-zlabs_selftest*
+/zlabs_selftest
 /src/.deps/
 /src/.dirstamp
 /src/libzlabs.pc
