@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ProjectSchemaDefinitions xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework">
-  <Rule Name="czmq-linkage-uiextension" PageTemplate="tool" DisplayName="Local Dependencies" SwitchPrefix="/" Order="1">
+  <Rule Name="czmq-linkage-uiextension" PageTemplate="tool" DisplayName="CZMQ Options" SwitchPrefix="/" Order="1">
     <Rule.Categories>
-      <Category Name="czmq" DisplayName="czmq" />
+      <Category Name="libczmq" DisplayName="libczmq" />
     </Rule.Categories>
     <Rule.DataSource>
       <DataSource Persistence="ProjectFile" ItemType="" />
     </Rule.DataSource>
-    <EnumProperty Name="Linkage-czmq" DisplayName="Linkage" Description="How czmq will be linked into the output of this project" Category="czmq">
+    <EnumProperty Name="Linkage-libczmq" DisplayName="Linkage" Description="How czmq will be linked into the output of this project" Category="libczmq">
       <EnumValue Name="" DisplayName="Not linked" />
       <EnumValue Name="dynamic" DisplayName="Dynamic (DLL)" />
       <EnumValue Name="static" DisplayName="Static (LIB)" />

@@ -16,18 +16,18 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\czmq\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Linkage-czmq)' == 'static' Or '$(Linkage-czmq)' == 'ltcg'">LIBCZMQ_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Linkage-libczmq)' == 'static' Or '$(Linkage-libczmq)' == 'ltcg'">LIBCZMQ_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies Condition="'$(Linkage-czmq)' != ''">czmq.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="$(Configuration.IndexOf('Debug')) != -1">$(ProjectDir)..\..\..\..\..\czmq\bin\$(PlatformName)\Debug\$(PlatformToolset)\$(Linkage-czmq)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="$(Configuration.IndexOf('Release')) != -1">$(ProjectDir)..\..\..\..\..\czmq\bin\$(PlatformName)\Release\$(PlatformToolset)\$(Linkage-czmq)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Linkage-libczmq)' != ''">czmq.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="$(Configuration.IndexOf('Debug')) != -1">$(ProjectDir)..\..\..\..\..\czmq\bin\$(PlatformName)\Debug\$(PlatformToolset)\$(Linkage-libczmq)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="$(Configuration.IndexOf('Release')) != -1">$(ProjectDir)..\..\..\..\..\czmq\bin\$(PlatformName)\Release\$(PlatformToolset)\$(Linkage-libczmq)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
 
   <!-- Copy -->
 
-  <Target Name="Linkage-czmq-dynamic" AfterTargets="AfterBuild" Condition="'$(Linkage-czmq)' == 'dynamic'">
+  <Target Name="Linkage-libczmq-dynamic" AfterTargets="AfterBuild" Condition="'$(Linkage-libczmq)' == 'dynamic'">
     <Copy Condition="$(Configuration.IndexOf('Debug')) != -1"
           SourceFiles="$(ProjectDir)..\..\..\..\..\czmq\bin\$(PlatformName)\Debug\$(PlatformToolset)\dynamic\czmq.dll"
           DestinationFiles="$(TargetDir)czmq.dll"
@@ -44,7 +44,7 @@
 
   <!-- Messages -->
 
-  <Target Name="czmq-info" BeforeTargets="AfterBuild" Condition="'$(Linkage-czmq)' == 'dynamic'">
+  <Target Name="libczmq-info" BeforeTargets="AfterBuild" Condition="'$(Linkage-libczmq)' == 'dynamic'">
     <Message Text="Copying czmq.dll -&gt; $(TargetDir)czmq.dll" Importance="high"/>
     <Message Text="Copying czmq.pdb -&gt; $(TargetDir)czmq.pdb" Importance="high" Condition="$(Configuration.IndexOf('Debug')) != -1" />
   </Target>

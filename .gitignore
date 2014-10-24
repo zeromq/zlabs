@@ -47,3 +47,5 @@ test-suite.log
 /src/libzlabs.pc
 /src/platform.h*
 /src/stamp-h1
+/obj/
+/bin/

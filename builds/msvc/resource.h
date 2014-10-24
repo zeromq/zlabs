@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by czmq.rc
+// Used by zlabs.rc
 
 // Next default values for new objects
 // 
