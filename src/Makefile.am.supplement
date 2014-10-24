@@ -1,0 +1,45 @@
+#################################################################
+#   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+#   Please read the README.txt file in the model directory.     #
+#################################################################
+lib_LTLIBRARIES = libzlabs.la
+
+pkgconfig_DATA = src/libzlabs.pc
+
+include_HEADERS = \
+    include/zlabs.h \
+    include/zpubsub.h \
+    include/zpubsub_option.h \
+    include/ztimeout.h \
+    include/zpubsub_filter.h
+
+libzlabs_la_SOURCES = \
+    src/platform.h \
+    src/zpubsub.c \
+    src/zpubsub_option.c \
+    src/ztimeout.c \
+    src/zpubsub_filter.c
+
+bin_PROGRAMS = zlabs_selftest
+
+zlabs_selftest_LDADD = \
+    libzlabs.la
+
+zlabs_selftest_SOURCES = \
+    src/zlabs_selftest.c
+
+libzlabs_la_LDFLAGS = \
+    -version-info @LTVER@
+
+if ON_MINGW
+libzlabs_la_LDFLAGS += \
+    -no-undefined \
+    -avoid-version
+endif
+
+TESTS = zlabs_selftest
+
+#################################################################
+#   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+#   Please read the README.txt file in the model directory.     #
+#################################################################

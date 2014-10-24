@@ -1,0 +1,14 @@
+<project
+    name = "zlabs"
+    script = "zlabs-project.gsl"
+    >
+    <header name = "zlabs" />
+
+    <class name = "zpubsub" />
+    <class name = "zpubsub_option" />
+    <class name = "ztimeout" />
+
+    <!-- Models that we build using GSL -->
+    <model name = "zpubsub_filter" />
+    <class name = "zpubsub_filter" />
+</project>

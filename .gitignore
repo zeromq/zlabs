@@ -27,3 +27,18 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Makefiles
+Makefile
+Makefile.in
+
+# Other
+/.libs/
+aclocal.m4
+/autom4te.cache/
+config.log
+config.status
+configure
+libtool
+test-suite.log
+zlabs_selftest*
