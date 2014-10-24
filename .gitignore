@@ -42,3 +42,8 @@ configure
 libtool
 test-suite.log
 zlabs_selftest*
+/src/.deps/
+/src/.dirstamp
+/src/libzlabs.pc
+/src/platform.h*
+/src/stamp-h1
