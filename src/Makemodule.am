@@ -44,7 +44,7 @@ src: src/libzlabs.la src/zlabs_selftest
 
 # Produce generated models; do this manually in src directory
 code:
-	cd $(srcdir/src); gsl -q zpubsub_filter.xml
+	cd $(srcdir)/src; gsl -q zpubsub_filter.xml
 #################################################################
 #   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
 #   Please read the README.txt file in the model directory.     #
