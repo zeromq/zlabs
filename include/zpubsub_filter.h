@@ -45,44 +45,44 @@ extern "C" {
 
 //  @interface
 //  Create a new zpubsub_filter
-CZMQ_EXPORT zpubsub_filter_t *
+ZLABS_EXPORT zpubsub_filter_t *
     zpubsub_filter_new (int id);
 
 //  Destroy the zpubsub_filter
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_destroy (zpubsub_filter_t **self_p);
 
 //  Parse a zpubsub_filter from zmsg_t. Returns a new object, or NULL if
 //  the message could not be parsed, or was NULL. Destroys msg and
 //  nullifies the msg reference.
-CZMQ_EXPORT zpubsub_filter_t *
+ZLABS_EXPORT zpubsub_filter_t *
     zpubsub_filter_decode (zmsg_t **msg_p);
 
 //  Encode zpubsub_filter into zmsg and destroy it. Returns a newly created
 //  object or NULL if error. Use when not in control of sending the message.
-CZMQ_EXPORT zmsg_t *
+ZLABS_EXPORT zmsg_t *
     zpubsub_filter_encode (zpubsub_filter_t **self_p);
 
 //  Receive and parse a zpubsub_filter from the socket. Returns new object,
 //  or NULL if error. Will block if there's no message waiting.
-CZMQ_EXPORT zpubsub_filter_t *
+ZLABS_EXPORT zpubsub_filter_t *
     zpubsub_filter_recv (void *input);
 
 //  Receive and parse a zpubsub_filter from the socket. Returns new object,
 //  or NULL either if there was no input waiting, or the recv was interrupted.
-CZMQ_EXPORT zpubsub_filter_t *
+ZLABS_EXPORT zpubsub_filter_t *
     zpubsub_filter_recv_nowait (void *input);
 
 //  Send the zpubsub_filter to the output, and destroy it
-CZMQ_EXPORT int
+ZLABS_EXPORT int
     zpubsub_filter_send (zpubsub_filter_t **self_p, void *output);
 
 //  Send the zpubsub_filter to the output, and do not destroy it
-CZMQ_EXPORT int
+ZLABS_EXPORT int
     zpubsub_filter_send_again (zpubsub_filter_t *self, void *output);
 
 //  Encode the FILTER
-CZMQ_EXPORT zmsg_t *
+ZLABS_EXPORT zmsg_t *
     zpubsub_filter_encode_filter (
         const char *partition,
         const char *topic);
@@ -90,47 +90,47 @@ CZMQ_EXPORT zmsg_t *
 
 //  Send the FILTER to the output in one step
 //  WARNING, this call will fail if output is of type ZMQ_ROUTER.
-CZMQ_EXPORT int
+ZLABS_EXPORT int
     zpubsub_filter_send_filter (void *output,
         const char *partition,
         const char *topic);
 
 //  Duplicate the zpubsub_filter message
-CZMQ_EXPORT zpubsub_filter_t *
+ZLABS_EXPORT zpubsub_filter_t *
     zpubsub_filter_dup (zpubsub_filter_t *self);
 
 //  Print contents of message to stdout
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_print (zpubsub_filter_t *self);
 
 //  Get/set the message routing id
-CZMQ_EXPORT zframe_t *
+ZLABS_EXPORT zframe_t *
     zpubsub_filter_routing_id (zpubsub_filter_t *self);
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_set_routing_id (zpubsub_filter_t *self, zframe_t *routing_id);
 
 //  Get the zpubsub_filter id and printable command
-CZMQ_EXPORT int
+ZLABS_EXPORT int
     zpubsub_filter_id (zpubsub_filter_t *self);
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_set_id (zpubsub_filter_t *self, int id);
-CZMQ_EXPORT const char *
+ZLABS_EXPORT const char *
     zpubsub_filter_command (zpubsub_filter_t *self);
 
 //  Get/set the partition field
-CZMQ_EXPORT const char *
+ZLABS_EXPORT const char *
     zpubsub_filter_partition (zpubsub_filter_t *self);
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *format, ...);
 
 //  Get/set the topic field
-CZMQ_EXPORT const char *
+ZLABS_EXPORT const char *
     zpubsub_filter_topic (zpubsub_filter_t *self);
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *format, ...);
 
 //  Self test of this class
-CZMQ_EXPORT int
+ZLABS_EXPORT int
     zpubsub_filter_test (bool verbose);
 //  @end
 

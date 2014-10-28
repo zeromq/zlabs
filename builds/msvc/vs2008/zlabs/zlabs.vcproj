@@ -18,7 +18,7 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="0" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="0" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
@@ -35,7 +35,7 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" TargetEnvironment="3" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="0" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="0" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
@@ -52,7 +52,7 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" />
-      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="1" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
+      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="1" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
@@ -69,7 +69,7 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" TargetEnvironment="3" />
-      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="1" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
+      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="1" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
@@ -86,11 +86,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" />
-      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;_WIN32;WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="3" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
+      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;_WIN32;WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="3" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -105,11 +105,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" TargetEnvironment="3" />
-      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;_WIN32;WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="3" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
+      <Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;_WIN32;WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" MinimalRebuild="false" BasicRuntimeChecks="3" RuntimeLibrary="3" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" DebugInformationFormat="1" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\x64;..\..\..\..\..\czmq\lib" TargetMachine="17" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\x64;..\..\..\..\..\libzmq\lib" TargetMachine="17" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -124,11 +124,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -143,11 +143,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" TargetEnvironment="3" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\x64;..\..\..\..\..\czmq\lib" GenerateDebugInformation="false" TargetMachine="17" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\x64;..\..\..\..\..\libzmq\lib" GenerateDebugInformation="false" TargetMachine="17" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -162,11 +162,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\" GenerateDebugInformation="true" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\" GenerateDebugInformation="true" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -181,11 +181,11 @@
       <Tool Name="VCXMLDataGeneratorTool" />
       <Tool Name="VCWebServiceProxyGeneratorTool" />
       <Tool Name="VCMIDLTool" TargetEnvironment="3" />
-      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\czmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
+      <Tool Name="VCCLCompilerTool" Optimization="2" InlineFunctionExpansion="1" AdditionalIncludeDirectories="..\..\..\..\include;..\..\..\..\..\libzmq\include" PreprocessorDefinitions="LIBZLABS_EXPORTS;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;BASE_THREADSAFE" StringPooling="true" RuntimeLibrary="2" EnableFunctionLevelLinking="true" PrecompiledHeaderFile="./zlabs.pch" AssemblerListingLocation="./" ObjectFile="./" ProgramDataBaseFileName="./" WarningLevel="3" SuppressStartupBanner="true" />
       <Tool Name="VCManagedResourceCompilerTool" />
       <Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="2060" />
       <Tool Name="VCPreLinkEventTool" />
-      <Tool Name="VCLinkerTool" AdditionalDependencies="czmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\czmq\lib\x64;..\..\..\..\..\czmq\lib" GenerateDebugInformation="true" TargetMachine="17" />
+      <Tool Name="VCLinkerTool" AdditionalDependencies="libzmq.lib Ws2_32.lib Iphlpapi.lib" AdditionalLibraryDirectories="..\..\..\..\..\libzmq\lib\x64;..\..\..\..\..\libzmq\lib" GenerateDebugInformation="true" TargetMachine="17" />
       <Tool Name="VCALinkTool" />
       <Tool Name="VCManifestTool" />
       <Tool Name="VCXDCMakeTool" />
@@ -333,7 +333,6 @@
       <File RelativePath="..\..\..\..\include\zpubsub_option.h" />
       <File RelativePath="..\..\..\..\include\ztimeout.h" />
       <File RelativePath="..\..\..\..\include\zpubsub_filter.h" />
-      <File RelativePath="..\..\..\..\include\zlabs.h" />
     </Filter>
   </Files>
   <Globals />

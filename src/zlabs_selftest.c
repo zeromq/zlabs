@@ -1,34 +1,28 @@
 /*  =========================================================================
-    zlabs_selftests.c - run selftests
+    zlabs_selftest.c - run selftests
 
     Runs all selftests.
 
     -------------------------------------------------------------------------
-    Copyright (c) 1991-2014 iMatix Corporation <www.imatix.com>
-    Copyright other contributors as noted in the AUTHORS file.
+    Copyright (c) the Contributors as noted in the AUTHORS file.       
+    This file is part of CZMQ, the high-level C binding for 0MQ:       
+    http://czmq.zeromq.org.                                            
+                                                                       
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.           
 
-    This file is part of czmq, the high-level C binding for 0MQ:
-    http://czmq.zeromq.org.
-
-    This is free software; you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or (at
-    your option) any later version.
-
-    This software is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this program. If not, see
-    <http://www.gnu.org/licenses/>.
+    #################################################################
+    #   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+    #   Please read the README.txt file in the model directory.     #
+    #################################################################
     =========================================================================
 */
 
 #include "../include/zlabs.h"
 
-int main (int argc, char *argv [])
+int
+main (int argc, char *argv [])
 {
     bool verbose;
     if (argc == 2 && streq (argv [1], "-v"))
@@ -38,18 +32,17 @@ int main (int argc, char *argv [])
 
     printf ("Running ZLABS selftests...\n");
 
-    //  These are ordered from lowest level to highest level
-    zpubsub_filter_test (verbose);
-    zpubsub_option_test (verbose);
-    zpubsub_test (verbose);
-
-    //  Selftest for ztimeout commented out for now; fails after
-    //  moving code to zlabs. Leaving ztimeout in the zlabs library
-    //  for now, in case somebody wants to fix it.
-    //  ztimeout_test (verbose);
-
-    zsys_shutdown ();
+    zpubsub_test (verbose); 
+    zpubsub_option_test (verbose); 
+    ztimeout_test (verbose); 
+    zpubsub_filter_test (verbose); 
 
     printf ("Tests passed OK\n");
     return 0;
 }
+/*
+    #################################################################
+    #   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+    #   Please read the README.txt file in the model directory.     #
+    #################################################################
+*/

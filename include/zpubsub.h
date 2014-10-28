@@ -28,35 +28,35 @@ typedef void (zpubsub_sample_fn) (const char *topic, const char *partition,
 
 //  Create a new pubsub, passing functions to use for serializing and
 //  deserializing filters.
-CZMQ_EXPORT zpubsub_t *
+ZLABS_EXPORT zpubsub_t *
     zpubsub_new (int domain, const char* partition);
 
 //  Publish a message on a given topic.
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_publish (zpubsub_t *self, const char *topic, const char *partition,
                      byte *message, size_t size);
 
 //  Subscribe to messages on a given topic.
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_subscribe (zpubsub_t *self,
                        const char *topic, const char *partition,
                        void *args, zpubsub_sample_fn *sample_fn);
 
 //  Unsubscribe from messages on a given topic.
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_unsubscribe (zpubsub_t *self,
                          const char *topic, const char *partition);
 
 //  Destroy a pubsub instance.
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_destroy (zpubsub_t **p_self);
 
 //  Probe the supplied object, and report if it looks like a zpubsub_t.
-CZMQ_EXPORT bool
+ZLABS_EXPORT bool
 	zpubsub_is (void *self);
 
 //  Self test of this class
-CZMQ_EXPORT void
+ZLABS_EXPORT void
     zpubsub_test (bool verbose);
 //  @end
 

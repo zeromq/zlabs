@@ -79,7 +79,6 @@ find_package(ZeroMQ REQUIRED)
 # includes
 ########################################################################
 set (zlabs_headers
-    include/zlabs.h
     include/zpubsub.h
     include/zpubsub_option.h
     include/ztimeout.h
