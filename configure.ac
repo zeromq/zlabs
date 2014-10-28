@@ -1,8 +1,13 @@
+#################################################################
+#   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+#   Please read the README.txt file in the model directory.     #
+#################################################################
+
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.61)
 #
-# The version number is extracted from include/czmq.h using
+# The version number is extracted from include/zlabs.h using
 # the version.sh script. Hence, it should be updated there.
 # The version in git should reflect the *next* version planned.
 #
@@ -39,7 +44,7 @@ LTVER="2:0:1"
 AC_SUBST(LTVER)
 
 # Capture c flags
-CZMQ_ORIG_CFLAGS="${CFLAGS:-none}"
+ZLABS_ORIG_CFLAGS="${CFLAGS:-none}"
 
 # Checks for programs
 AC_PROG_CC
@@ -50,6 +55,12 @@ AC_PROG_LIBTOOL
 AC_PROG_SED
 AC_PROG_AWK
 PKG_PROG_PKG_CONFIG
+
+# 
+AC_ARG_ENABLE([labs],
+    [AS_HELP_STRING([--disable-labs], [Enable Labs support @<:@check@:>@])],
+    [:],
+    [enable_labs=check])
 
 # Checks for libraries
 AC_CHECK_LIB([pthread], [pthread_create])
@@ -68,50 +79,50 @@ if test "x${ZLABS_GCOV}" == "xyes"; then
     fi
 fi
 
-# Check for libczmq library
-libczmq_prefix=detect
-AC_ARG_WITH([libczmq],
-    [AS_HELP_STRING([--with-libczmq=PREFIX],
-        [build with CZMQ library installed in PREFIX [default=autodetect]])],
-    [case "x$withval" in
-        xno)
-            AC_MSG_ERROR([ZLABS requires the CZMQ library])
-            ;;
-        xyes|x)
-            ;;
-        *)
-            CPPFLAGS="$CPPFLAGS -I${withval}/include"
-            LDFLAGS="$LDFLAGS -L${withval}/lib"
-            czmq_prefix=${withval}
-            ;;
-    esac ]
-)
-if test "x$libczmq_prefix" = "xdetect"; then
-    PKG_CHECK_MODULES(
-        [CZMQ], [libczmq], [libczmq_prefix=pkgconfig], [libczmq_prefix=])
-        if test "x$libczmq_prefix" = "xpkgconfig"; then
-            CPPFLAGS="$CPPFLAGS ${CZMQ_CFLAGS}"
-            LDFLAGS="$LDFLAGS ${CZMQ_LIBS}"
-        fi
-fi
+# libzmq integration
+AC_ARG_WITH([libzmq],
+            [AS_HELP_STRING([--with-libzmq],
+                            [Specify libzmq prefix])],
+            [search_libzmq="yes"],
+            [])
 
-if test "x$zlabs_search_libczmq" = "xyes"; then
-    if test -r "${with_libczmq}/include/czmq.h"; then
-        CFLAGS="-I${with_libczmq}/include ${CFLAGS}"
-        LDFLAGS="-L${with_libczmq}/lib ${LDFLAGS}"
+if test "x$search_libzmq" = "xyes"; then
+    if test -r "${with_libzmq}/include/zmq.h"; then
+        CFLAGS="-I${with_libzmq}/include ${CFLAGS}"
+        LDFLAGS="-L${with_libzmq}/lib ${LDFLAGS}"
+    else
+        AC_MSG_ERROR([${with_libzmq}/include/zmq.h not found. Please check libzmq prefix])
     fi
 fi
 
-AC_CHECK_HEADER([czmq.h], [], [AC_MSG_ERROR([cannot find czmq.h])])
+AC_CHECK_LIB(zmq, zmq_init,
+    LIBS="-lzmq $LIBS",
+    [AC_MSG_ERROR([cannot link with -lzmq, install libzmq.])])
 
-AC_CHECK_LIB(czmq, zsys_init, ,[AC_MSG_ERROR([cannot link with -lczmq, install libczmq.])])
+AC_MSG_CHECKING([whether libzmq installation works])
+
+# libczmq integration
+AC_ARG_WITH([libczmq],
+            [AS_HELP_STRING([--with-libczmq],
+                            [Specify libczmq prefix])],
+            [search_libczmq="yes"],
+            [])
+
+if test "x$search_libczmq" = "xyes"; then
+    if test -r "${with_libczmq}/include/czmq.h"; then
+        CFLAGS="-I${with_libczmq}/include ${CFLAGS}"
+        LDFLAGS="-L${with_libczmq}/lib ${LDFLAGS}"
+    else
+        AC_MSG_ERROR([${with_libczmq}/include/czmq.h not found. Please check libczmq prefix])
+    fi
+fi
+
+AC_CHECK_LIB(czmq, zctx_test,
+    LIBS="-lczmq $LIBS",
+    [AC_MSG_ERROR([cannot link with -lczmq, install libczmq.])])
 
 AC_MSG_CHECKING([whether libczmq installation works])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <czmq.h>],
-                                [zsys_init();])
-               ],
-               [AC_MSG_RESULT([yes])],
-               [AC_MSG_ERROR([no. Please specify libczmq installation prefix using --with-libczmq])])
+
 
 # Platform specific checks
 zlabs_on_mingw32="no"
@@ -150,7 +161,7 @@ case "${host_os}" in
         # Define on Linux to enable all library features
         CPPFLAGS="-D_GNU_SOURCE -DLINUX $CPPFLAGS"
         AC_DEFINE(ZLABS_HAVE_LINUX, 1, [Have Linux OS])
-
+        
         case "${host_os}" in
             *android*)
                 AC_DEFINE(ZLABS_HAVE_ANDROID, 1, [Have Android OS])
@@ -214,9 +225,7 @@ esac
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(errno.h arpa/inet.h netinet/tcp.h netinet/in.h stddef.h \
-                 stdlib.h string.h sys/socket.h sys/time.h unistd.h \
-                 limits.h ifaddrs.h)
+AC_CHECK_HEADERS(errno.h arpa/inet.h netinet/tcp.h netinet/in.h stddef.h   stdlib.h string.h sys/socket.h sys/time.h unistd.h   limits.h ifaddrs.h)
 AC_CHECK_HEADERS([net/if.h net/if_media.h linux/wireless.h], [], [],
 [
 #ifdef HAVE_SYS_SOCKET_H
@@ -244,6 +253,7 @@ AM_CONDITIONAL(ON_MINGW, test "x$zlabs_on_mingw32" = "xyes")
 AM_CONDITIONAL(ON_ANDROID, test "x$zlabs_on_android" = "xyes")
 AM_CONDITIONAL(INSTALL_MAN, test "x$zlabs_install_man" = "xyes")
 AM_CONDITIONAL(BUILD_DOC, test "x$zlabs_build_doc" = "xyes")
+AM_CONDITIONAL([ENABLE_LABS], [test "x$enable_labs" = "xyes"])
 
 # Checks for library functions.
 AC_TYPE_SIGNAL
@@ -256,5 +266,10 @@ AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 AC_SUBST([pkgconfigdir])
 
 # Specify output files
-AC_CONFIG_FILES([Makefile src/Makefile src/libzlabs.pc ])
+AC_CONFIG_FILES([Makefile doc/Makefile src/libzlabs.pc])
 AC_OUTPUT
+
+#################################################################
+#   GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY    #
+#   Please read the README.txt file in the model directory.     #
+#################################################################
