@@ -333,6 +333,7 @@
       <File RelativePath="..\..\..\..\include\zpubsub_option.h" />
       <File RelativePath="..\..\..\..\include\ztimeout.h" />
       <File RelativePath="..\..\..\..\include\zpubsub_filter.h" />
+      <File RelativePath="..\..\..\..\include\zlabs_prelude.h" />
     </Filter>
   </Files>
   <Globals />

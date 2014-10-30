@@ -35,7 +35,7 @@
 #define ZLABS_MAKE_VERSION(major, minor, patch) \
     ((major) * 10000 + (minor) * 100 + (patch))
 #define ZLABS_VERSION \
-    ZLABS_MAKE_VERSION((ZLABS_VERSION_MAJOR, ZLABS_VERSION_MINOR, ZLABS_VERSION_PATCH)
+    ZLABS_MAKE_VERSION(ZLABS_VERSION_MAJOR, ZLABS_VERSION_MINOR, ZLABS_VERSION_PATCH)
 
 //  Opaque class structures to allow forward references
 typedef struct _zpubsub_t zpubsub_t;
@@ -43,7 +43,9 @@ typedef struct _zpubsub_option_t zpubsub_option_t;
 typedef struct _ztimeout_t ztimeout_t;
 typedef struct _zpubsub_filter_t zpubsub_filter_t;
 
+
 //  Public API classes
+
 #include "zpubsub.h"
 #include "zpubsub_option.h"
 #include "ztimeout.h"
