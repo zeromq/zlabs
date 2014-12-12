@@ -51,3 +51,6 @@ test-suite.log
 /bin/
 /doc/*.7
 /doc/*.3
+/src/zlabs_selftest
+/src/zlabs_selftest.log
+/src/zlabs_selftest.trs

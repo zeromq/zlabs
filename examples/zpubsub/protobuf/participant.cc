@@ -17,14 +17,11 @@ namespace zpubsub
     }
 
     static void
-    s_free_subscriber (void **subscriber)
+    s_free_subscriber (void *subscriber)
     {
-        assert (subscriber);
-
-        Subscriber * sub = (Subscriber *) *subscriber;
+        Subscriber *sub = (Subscriber *) subscriber;
         if (sub) {
             delete sub;
-            *subscriber = NULL;
         }
     }
 
@@ -33,7 +30,6 @@ namespace zpubsub
         m_szDefaultPartition = szDefaultPartition? strdup (szDefaultPartition): strdup (cm_szDefaultPartition);
         m_pubSub = zpubsub_new (iDomain, m_szDefaultPartition);
         m_subscribers = zhash_new ();
-        zhash_set_destructor (m_subscribers, s_free_subscriber);
     }
 
     Participant::~Participant ()
@@ -50,6 +46,7 @@ namespace zpubsub
             Subscriber *sub = new Subscriber (topic, m_szDefaultPartition, callback);
             zpubsub_subscribe (m_pubSub, topic.GetTypeName (), topic.GetPartition (), sub, s_sample_fn);
             zhash_update (m_subscribers, key, sub);
+            zhash_freefn (m_subscribers, key, s_free_subscriber);
         }
 
         delete[] key;
