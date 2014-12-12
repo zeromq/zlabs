@@ -49,3 +49,5 @@ test-suite.log
 /src/stamp-h1
 /obj/
 /bin/
+/doc/*.7
+/doc/*.3
