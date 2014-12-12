@@ -1,6 +1,6 @@
 /*  =========================================================================
     zpubsub_filter - zpubsub protocol
-
+    
     Codec header for zpubsub_filter.
 
     ** WARNING *************************************************************
@@ -9,16 +9,16 @@
     statements. DO NOT MAKE ANY CHANGES YOU WISH TO KEEP. The correct places
     for commits are:
 
-    * The XML model used for this code generation: zpubsub_filter.xml
-    * The code generation script that built this file: zproto_codec_c
+     * The XML model used for this code generation: zpubsub_filter.xml, or
+     * The code generation script that built this file: zproto_codec_c
     ************************************************************************
-    Copyright (c) the Contributors as noted in the AUTHORS file.
-    This file is part of CZMQ, the high-level C binding for 0MQ:
-    http://czmq.zeromq.org.
-
+    Copyright (c) the Contributors as noted in the AUTHORS file.       
+    This file is part of CZMQ, the high-level C binding for 0MQ:       
+    http://czmq.zeromq.org.                                            
+                                                                       
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
-    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.           
     =========================================================================
 */
 
@@ -39,98 +39,68 @@
 
 #define ZPUBSUB_FILTER_FILTER               1
 
+#include <czmq.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//  @interface
-//  Create a new zpubsub_filter
-ZLABS_EXPORT zpubsub_filter_t *
-    zpubsub_filter_new (int id);
+//  Opaque class structure
+#ifndef ZPUBSUB_FILTER_T_DEFINED
+typedef struct _zpubsub_filter_t zpubsub_filter_t;
+#define ZPUBSUB_FILTER_T_DEFINED
+#endif
 
-//  Destroy the zpubsub_filter
-ZLABS_EXPORT void
+//  @interface
+//  Create a new empty zpubsub_filter
+zpubsub_filter_t *
+    zpubsub_filter_new (void);
+
+//  Destroy a zpubsub_filter instance
+void
     zpubsub_filter_destroy (zpubsub_filter_t **self_p);
 
-//  Parse a zpubsub_filter from zmsg_t. Returns a new object, or NULL if
-//  the message could not be parsed, or was NULL. Destroys msg and
-//  nullifies the msg reference.
-ZLABS_EXPORT zpubsub_filter_t *
-    zpubsub_filter_decode (zmsg_t **msg_p);
+//  Receive a zpubsub_filter from the socket. Returns 0 if OK, -1 if
+//  there was an error. Blocks if there is no message waiting.
+int
+    zpubsub_filter_recv (zpubsub_filter_t *self, zsock_t *input);
 
-//  Encode zpubsub_filter into zmsg and destroy it. Returns a newly created
-//  object or NULL if error. Use when not in control of sending the message.
-ZLABS_EXPORT zmsg_t *
-    zpubsub_filter_encode (zpubsub_filter_t **self_p);
-
-//  Receive and parse a zpubsub_filter from the socket. Returns new object,
-//  or NULL if error. Will block if there's no message waiting.
-ZLABS_EXPORT zpubsub_filter_t *
-    zpubsub_filter_recv (void *input);
-
-//  Receive and parse a zpubsub_filter from the socket. Returns new object,
-//  or NULL either if there was no input waiting, or the recv was interrupted.
-ZLABS_EXPORT zpubsub_filter_t *
-    zpubsub_filter_recv_nowait (void *input);
-
-//  Send the zpubsub_filter to the output, and destroy it
-ZLABS_EXPORT int
-    zpubsub_filter_send (zpubsub_filter_t **self_p, void *output);
-
-//  Send the zpubsub_filter to the output, and do not destroy it
-ZLABS_EXPORT int
-    zpubsub_filter_send_again (zpubsub_filter_t *self, void *output);
-
-//  Encode the FILTER
-ZLABS_EXPORT zmsg_t *
-    zpubsub_filter_encode_filter (
-        const char *partition,
-        const char *topic);
-
-
-//  Send the FILTER to the output in one step
-//  WARNING, this call will fail if output is of type ZMQ_ROUTER.
-ZLABS_EXPORT int
-    zpubsub_filter_send_filter (void *output,
-        const char *partition,
-        const char *topic);
-
-//  Duplicate the zpubsub_filter message
-ZLABS_EXPORT zpubsub_filter_t *
-    zpubsub_filter_dup (zpubsub_filter_t *self);
-
+//  Send the zpubsub_filter to the output socket, does not destroy it
+int
+    zpubsub_filter_send (zpubsub_filter_t *self, zsock_t *output);
+    
 //  Print contents of message to stdout
-ZLABS_EXPORT void
+void
     zpubsub_filter_print (zpubsub_filter_t *self);
 
 //  Get/set the message routing id
-ZLABS_EXPORT zframe_t *
+zframe_t *
     zpubsub_filter_routing_id (zpubsub_filter_t *self);
-ZLABS_EXPORT void
+void
     zpubsub_filter_set_routing_id (zpubsub_filter_t *self, zframe_t *routing_id);
 
 //  Get the zpubsub_filter id and printable command
-ZLABS_EXPORT int
+int
     zpubsub_filter_id (zpubsub_filter_t *self);
-ZLABS_EXPORT void
+void
     zpubsub_filter_set_id (zpubsub_filter_t *self, int id);
-ZLABS_EXPORT const char *
+const char *
     zpubsub_filter_command (zpubsub_filter_t *self);
 
 //  Get/set the partition field
-ZLABS_EXPORT const char *
+const char *
     zpubsub_filter_partition (zpubsub_filter_t *self);
-ZLABS_EXPORT void
-    zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *format, ...);
+void
+    zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *value);
 
 //  Get/set the topic field
-ZLABS_EXPORT const char *
+const char *
     zpubsub_filter_topic (zpubsub_filter_t *self);
-ZLABS_EXPORT void
-    zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *format, ...);
+void
+    zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *value);
 
 //  Self test of this class
-ZLABS_EXPORT int
+int
     zpubsub_filter_test (bool verbose);
 //  @end
 

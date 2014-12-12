@@ -3,9 +3,8 @@
     signature = "7"
     title = "zpubsub protocol"
     script = "zproto_codec_c"
-    package_dir = "."
-    project_header = "../include/czmq.h"
-    export_macro = "CZMQ_EXPORT"
+    package_dir = "../include"
+    source_dir = "."
     >
 
     This defines the protocol for the zpubsub class. It encodes the filter
@@ -13,7 +12,7 @@
     of the filter frame from this message, follwed by the message blob. The
     format of the message blob is entirely up to the application.
 
-    <include filename = "license.xml" />
+    <include filename = "../license.xml" />
 
     <define name = "MAGIC_NUMBER" value = "666" />
     <define name = "VERSION" value = "2" />

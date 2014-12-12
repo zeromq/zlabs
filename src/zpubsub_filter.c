@@ -9,17 +9,16 @@
     statements. DO NOT MAKE ANY CHANGES YOU WISH TO KEEP. The correct places
     for commits are:
 
-    * The XML model used for this code generation: zpubsub_filter.xml
-    * The code generation script that built this file: zproto_codec_c
+     * The XML model used for this code generation: zpubsub_filter.xml, or
+     * The code generation script that built this file: zproto_codec_c
     ************************************************************************
-
-    Copyright (c) the Contributors as noted in the AUTHORS file.
-    This file is part of CZMQ, the high-level C binding for 0MQ:
-    http://czmq.zeromq.org.
-
+    Copyright (c) the Contributors as noted in the AUTHORS file.       
+    This file is part of CZMQ, the high-level C binding for 0MQ:       
+    http://czmq.zeromq.org.                                            
+                                                                       
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
-    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.           
     =========================================================================
 */
 
@@ -30,7 +29,7 @@
 @end
 */
 
-#include "../include/zlabs.h"
+#include "../include/zpubsub_filter.h"
 
 //  Structure of our class
 
@@ -39,10 +38,8 @@ struct _zpubsub_filter_t {
     int id;                             //  zpubsub_filter message ID
     byte *needle;                       //  Read/write pointer for serialization
     byte *ceiling;                      //  Valid upper limit for read pointer
-    uint16_t magic;                     //  Magic number
-    uint16_t version;                   //  Version
-    char *partition;                    //  Partition name
-    char *topic;                        //  Topic name
+    char partition [256];               //  Partition name
+    char topic [256];                   //  Topic name
 };
 
 //  --------------------------------------------------------------------------
@@ -56,8 +53,10 @@ struct _zpubsub_filter_t {
 
 //  Get a block of octets from the frame
 #define GET_OCTETS(host,size) { \
-    if (self->needle + size > self->ceiling) \
+    if (self->needle + size > self->ceiling) { \
+        zsys_warning ("zpubsub_filter: GET_OCTETS failed"); \
         goto malformed; \
+    } \
     memcpy ((host), self->needle, size); \
     self->needle += size; \
 }
@@ -99,16 +98,20 @@ struct _zpubsub_filter_t {
 
 //  Get a 1-byte number from the frame
 #define GET_NUMBER1(host) { \
-    if (self->needle + 1 > self->ceiling) \
+    if (self->needle + 1 > self->ceiling) { \
+        zsys_warning ("zpubsub_filter: GET_NUMBER1 failed"); \
         goto malformed; \
+    } \
     (host) = *(byte *) self->needle; \
     self->needle++; \
 }
 
 //  Get a 2-byte number from the frame
 #define GET_NUMBER2(host) { \
-    if (self->needle + 2 > self->ceiling) \
+    if (self->needle + 2 > self->ceiling) { \
+        zsys_warning ("zpubsub_filter: GET_NUMBER2 failed"); \
         goto malformed; \
+    } \
     (host) = ((uint16_t) (self->needle [0]) << 8) \
            +  (uint16_t) (self->needle [1]); \
     self->needle += 2; \
@@ -116,8 +119,10 @@ struct _zpubsub_filter_t {
 
 //  Get a 4-byte number from the frame
 #define GET_NUMBER4(host) { \
-    if (self->needle + 4 > self->ceiling) \
+    if (self->needle + 4 > self->ceiling) { \
+        zsys_warning ("zpubsub_filter: GET_NUMBER4 failed"); \
         goto malformed; \
+    } \
     (host) = ((uint32_t) (self->needle [0]) << 24) \
            + ((uint32_t) (self->needle [1]) << 16) \
            + ((uint32_t) (self->needle [2]) << 8) \
@@ -127,8 +132,10 @@ struct _zpubsub_filter_t {
 
 //  Get a 8-byte number from the frame
 #define GET_NUMBER8(host) { \
-    if (self->needle + 8 > self->ceiling) \
+    if (self->needle + 8 > self->ceiling) { \
+        zsys_warning ("zpubsub_filter: GET_NUMBER8 failed"); \
         goto malformed; \
+    } \
     (host) = ((uint64_t) (self->needle [0]) << 56) \
            + ((uint64_t) (self->needle [1]) << 48) \
            + ((uint64_t) (self->needle [2]) << 40) \
@@ -152,9 +159,10 @@ struct _zpubsub_filter_t {
 #define GET_STRING(host) { \
     size_t string_size; \
     GET_NUMBER1 (string_size); \
-    if (self->needle + string_size > (self->ceiling)) \
+    if (self->needle + string_size > (self->ceiling)) { \
+        zsys_warning ("zpubsub_filter: GET_STRING failed"); \
         goto malformed; \
-    (host) = (char *) malloc (string_size + 1); \
+    } \
     memcpy ((host), self->needle, string_size); \
     (host) [string_size] = 0; \
     self->needle += string_size; \
@@ -172,8 +180,11 @@ struct _zpubsub_filter_t {
 #define GET_LONGSTR(host) { \
     size_t string_size; \
     GET_NUMBER4 (string_size); \
-    if (self->needle + string_size > (self->ceiling)) \
+    if (self->needle + string_size > (self->ceiling)) { \
+        zsys_warning ("zpubsub_filter: GET_LONGSTR failed"); \
         goto malformed; \
+    } \
+    free ((host)); \
     (host) = (char *) malloc (string_size + 1); \
     memcpy ((host), self->needle, string_size); \
     (host) [string_size] = 0; \
@@ -185,10 +196,9 @@ struct _zpubsub_filter_t {
 //  Create a new zpubsub_filter
 
 zpubsub_filter_t *
-zpubsub_filter_new (int id)
+zpubsub_filter_new (void)
 {
     zpubsub_filter_t *self = (zpubsub_filter_t *) zmalloc (sizeof (zpubsub_filter_t));
-    self->id = id;
     return self;
 }
 
@@ -205,8 +215,6 @@ zpubsub_filter_destroy (zpubsub_filter_t **self_p)
 
         //  Free class properties
         zframe_destroy (&self->routing_id);
-        free (self->partition);
-        free (self->topic);
 
         //  Free object itself
         free (self);
@@ -216,290 +224,125 @@ zpubsub_filter_destroy (zpubsub_filter_t **self_p)
 
 
 //  --------------------------------------------------------------------------
-//  Parse a zpubsub_filter from zmsg_t. Returns a new object, or NULL if
-//  the message could not be parsed, or was NULL. Destroys msg and
-//  nullifies the msg reference.
+//  Receive a zpubsub_filter from the socket. Returns 0 if OK, -1 if
+//  there was an error. Blocks if there is no message waiting.
 
-zpubsub_filter_t *
-zpubsub_filter_decode (zmsg_t **msg_p)
+int
+zpubsub_filter_recv (zpubsub_filter_t *self, zsock_t *input)
 {
-    assert (msg_p);
-    zmsg_t *msg = *msg_p;
-    if (msg == NULL)
-        return NULL;
-
-    zpubsub_filter_t *self = zpubsub_filter_new (0);
-    //  Read and parse command in frame
-    zframe_t *frame = zmsg_pop (msg);
-    if (!frame)
-        goto empty;             //  Malformed or empty
-
+    assert (input);
+    
+    if (zsock_type (input) == ZMQ_ROUTER) {
+        zframe_destroy (&self->routing_id);
+        self->routing_id = zframe_recv (input);
+        if (!self->routing_id || !zsock_rcvmore (input)) {
+            zsys_warning ("zpubsub_filter: no routing ID");
+            return -1;          //  Interrupted or malformed
+        }
+    }
+    zmq_msg_t frame;
+    zmq_msg_init (&frame);
+    int size = zmq_msg_recv (&frame, zsock_resolve (input), 0);
+    if (size == -1) {
+        zsys_warning ("zpubsub_filter: interrupted");
+        goto malformed;         //  Interrupted
+    }
     //  Get and check protocol signature
-    self->needle = zframe_data (frame);
-    self->ceiling = self->needle + zframe_size (frame);
+    self->needle = (byte *) zmq_msg_data (&frame);
+    self->ceiling = self->needle + zmq_msg_size (&frame);
+    
     uint16_t signature;
     GET_NUMBER2 (signature);
-    if (signature != (0xAAA0 | 7))
-        goto empty;             //  Invalid signature
-
+    if (signature != (0xAAA0 | 7)) {
+        zsys_warning ("zpubsub_filter: invalid signature");
+        //  TODO: discard invalid messages and loop, and return
+        //  -1 only on interrupt
+        goto malformed;         //  Interrupted
+    }
     //  Get message id and parse per message type
     GET_NUMBER1 (self->id);
 
     switch (self->id) {
         case ZPUBSUB_FILTER_FILTER:
-            GET_NUMBER2 (self->magic);
-            if (self->magic != ZPUBSUB_FILTER_MAGIC_NUMBER)
-                goto malformed;
-            GET_NUMBER2 (self->version);
-            if (self->version != ZPUBSUB_FILTER_VERSION)
-                goto malformed;
+            {
+                uint16_t magic;
+                GET_NUMBER2 (magic);
+                if (magic != ZPUBSUB_FILTER_MAGIC_NUMBER) {
+                    zsys_warning ("zpubsub_filter: magic is invalid");
+                    goto malformed;
+                }
+            }
+            {
+                uint16_t version;
+                GET_NUMBER2 (version);
+                if (version != ZPUBSUB_FILTER_VERSION) {
+                    zsys_warning ("zpubsub_filter: version is invalid");
+                    goto malformed;
+                }
+            }
             GET_STRING (self->partition);
             GET_STRING (self->topic);
             break;
 
         default:
+            zsys_warning ("zpubsub_filter: bad message ID");
             goto malformed;
     }
     //  Successful return
-    zframe_destroy (&frame);
-    zmsg_destroy (msg_p);
-    return self;
+    zmq_msg_close (&frame);
+    return 0;
 
     //  Error returns
     malformed:
-        zsys_error ("malformed message '%d'\n", self->id);
-    empty:
-        zframe_destroy (&frame);
-        zmsg_destroy (msg_p);
-        zpubsub_filter_destroy (&self);
-        return (NULL);
+        zsys_warning ("zpubsub_filter: zpubsub_filter malformed message, fail");
+        zmq_msg_close (&frame);
+        return -1;              //  Invalid message
 }
 
 
 //  --------------------------------------------------------------------------
-//  Encode zpubsub_filter into zmsg and destroy it. Returns a newly created
-//  object or NULL if error. Use when not in control of sending the message.
+//  Send the zpubsub_filter to the socket. Does not destroy it. Returns 0 if
+//  OK, else -1.
 
-zmsg_t *
-zpubsub_filter_encode (zpubsub_filter_t **self_p)
+int
+zpubsub_filter_send (zpubsub_filter_t *self, zsock_t *output)
 {
-    assert (self_p);
-    assert (*self_p);
+    assert (self);
+    assert (output);
 
-    zpubsub_filter_t *self = *self_p;
-    zmsg_t *msg = zmsg_new ();
+    if (zsock_type (output) == ZMQ_ROUTER)
+        zframe_send (&self->routing_id, output, ZFRAME_MORE + ZFRAME_REUSE);
 
     size_t frame_size = 2 + 1;          //  Signature and message ID
     switch (self->id) {
         case ZPUBSUB_FILTER_FILTER:
-            //  magic is a 2-byte integer
-            frame_size += 2;
-            //  version is a 2-byte integer
-            frame_size += 2;
-            //  partition is a string with 1-byte length
-            frame_size++;       //  Size is one octet
-            if (self->partition)
-                frame_size += strlen (self->partition);
-            //  topic is a string with 1-byte length
-            frame_size++;       //  Size is one octet
-            if (self->topic)
-                frame_size += strlen (self->topic);
+            frame_size += 2;            //  magic
+            frame_size += 2;            //  version
+            frame_size += 1 + strlen (self->partition);
+            frame_size += 1 + strlen (self->topic);
             break;
-
-        default:
-            zsys_error ("bad message type '%d', not sent\n", self->id);
-            //  No recovery, this is a fatal application error
-            assert (false);
     }
     //  Now serialize message into the frame
-    zframe_t *frame = zframe_new (NULL, frame_size);
-    self->needle = zframe_data (frame);
+    zmq_msg_t frame;
+    zmq_msg_init_size (&frame, frame_size);
+    self->needle = (byte *) zmq_msg_data (&frame);
     PUT_NUMBER2 (0xAAA0 | 7);
     PUT_NUMBER1 (self->id);
-
+    size_t nbr_frames = 1;              //  Total number of frames to send
+    
     switch (self->id) {
         case ZPUBSUB_FILTER_FILTER:
             PUT_NUMBER2 (ZPUBSUB_FILTER_MAGIC_NUMBER);
             PUT_NUMBER2 (ZPUBSUB_FILTER_VERSION);
-            if (self->partition) {
-                PUT_STRING (self->partition);
-            }
-            else
-                PUT_NUMBER1 (0);    //  Empty string
-            if (self->topic) {
-                PUT_STRING (self->topic);
-            }
-            else
-                PUT_NUMBER1 (0);    //  Empty string
+            PUT_STRING (self->partition);
+            PUT_STRING (self->topic);
             break;
 
     }
     //  Now send the data frame
-    if (zmsg_append (msg, &frame)) {
-        zmsg_destroy (&msg);
-        zpubsub_filter_destroy (self_p);
-        return NULL;
-    }
-    //  Destroy zpubsub_filter object
-    zpubsub_filter_destroy (self_p);
-    return msg;
-}
-
-
-//  --------------------------------------------------------------------------
-//  Receive and parse a zpubsub_filter from the socket. Returns new object or
-//  NULL if error. Will block if there's no message waiting.
-
-zpubsub_filter_t *
-zpubsub_filter_recv (void *input)
-{
-    assert (input);
-    zmsg_t *msg = zmsg_recv (input);
-    if (!msg)
-        return NULL;            //  Interrupted
-    //  If message came from a router socket, first frame is routing_id
-    zframe_t *routing_id = NULL;
-    if (zsocket_type (zsock_resolve (input)) == ZMQ_ROUTER) {
-        routing_id = zmsg_pop (msg);
-        //  If message was not valid, forget about it
-        if (!routing_id || !zmsg_next (msg))
-            return NULL;        //  Malformed or empty
-    }
-    zpubsub_filter_t *zpubsub_filter = zpubsub_filter_decode (&msg);
-    if (zpubsub_filter && zsocket_type (zsock_resolve (input)) == ZMQ_ROUTER)
-        zpubsub_filter->routing_id = routing_id;
-
-    return zpubsub_filter;
-}
-
-
-//  --------------------------------------------------------------------------
-//  Receive and parse a zpubsub_filter from the socket. Returns new object,
-//  or NULL either if there was no input waiting, or the recv was interrupted.
-
-zpubsub_filter_t *
-zpubsub_filter_recv_nowait (void *input)
-{
-    assert (input);
-    zmsg_t *msg = zmsg_recv_nowait (input);
-    if (!msg)
-        return NULL;            //  Interrupted
-    //  If message came from a router socket, first frame is routing_id
-    zframe_t *routing_id = NULL;
-    if (zsocket_type (zsock_resolve (input)) == ZMQ_ROUTER) {
-        routing_id = zmsg_pop (msg);
-        //  If message was not valid, forget about it
-        if (!routing_id || !zmsg_next (msg))
-            return NULL;        //  Malformed or empty
-    }
-    zpubsub_filter_t *zpubsub_filter = zpubsub_filter_decode (&msg);
-    if (zpubsub_filter && zsocket_type (zsock_resolve (input)) == ZMQ_ROUTER)
-        zpubsub_filter->routing_id = routing_id;
-
-    return zpubsub_filter;
-}
-
-
-//  --------------------------------------------------------------------------
-//  Send the zpubsub_filter to the socket, and destroy it
-//  Returns 0 if OK, else -1
-
-int
-zpubsub_filter_send (zpubsub_filter_t **self_p, void *output)
-{
-    assert (self_p);
-    assert (*self_p);
-    assert (output);
-
-    //  Save routing_id if any, as encode will destroy it
-    zpubsub_filter_t *self = *self_p;
-    zframe_t *routing_id = self->routing_id;
-    self->routing_id = NULL;
-
-    //  Encode zpubsub_filter message to a single zmsg
-    zmsg_t *msg = zpubsub_filter_encode (self_p);
-
-    //  If we're sending to a ROUTER, send the routing_id first
-    if (zsocket_type (zsock_resolve (output)) == ZMQ_ROUTER) {
-        assert (routing_id);
-        zmsg_prepend (msg, &routing_id);
-    }
-    else
-        zframe_destroy (&routing_id);
-
-    if (msg && zmsg_send (&msg, output) == 0)
-        return 0;
-    else
-        return -1;              //  Failed to encode, or send
-}
-
-
-//  --------------------------------------------------------------------------
-//  Send the zpubsub_filter to the output, and do not destroy it
-
-int
-zpubsub_filter_send_again (zpubsub_filter_t *self, void *output)
-{
-    assert (self);
-    assert (output);
-    self = zpubsub_filter_dup (self);
-    return zpubsub_filter_send (&self, output);
-}
-
-
-//  --------------------------------------------------------------------------
-//  Encode FILTER message
-
-zmsg_t *
-zpubsub_filter_encode_filter (
-    const char *partition,
-    const char *topic)
-{
-    zpubsub_filter_t *self = zpubsub_filter_new (ZPUBSUB_FILTER_FILTER);
-    zpubsub_filter_set_partition (self, partition);
-    zpubsub_filter_set_topic (self, topic);
-    return zpubsub_filter_encode (&self);
-}
-
-
-//  --------------------------------------------------------------------------
-//  Send the FILTER to the socket in one step
-
-int
-zpubsub_filter_send_filter (
-    void *output,
-    const char *partition,
-    const char *topic)
-{
-    zpubsub_filter_t *self = zpubsub_filter_new (ZPUBSUB_FILTER_FILTER);
-    zpubsub_filter_set_partition (self, partition);
-    zpubsub_filter_set_topic (self, topic);
-    return zpubsub_filter_send (&self, output);
-}
-
-
-//  --------------------------------------------------------------------------
-//  Duplicate the zpubsub_filter message
-
-zpubsub_filter_t *
-zpubsub_filter_dup (zpubsub_filter_t *self)
-{
-    if (!self)
-        return NULL;
-
-    zpubsub_filter_t *copy = zpubsub_filter_new (self->id);
-    if (self->routing_id)
-        copy->routing_id = zframe_dup (self->routing_id);
-    switch (self->id) {
-        case ZPUBSUB_FILTER_FILTER:
-            copy->magic = self->magic;
-            copy->version = self->version;
-            copy->partition = self->partition? strdup (self->partition): NULL;
-            copy->topic = self->topic? strdup (self->topic): NULL;
-            break;
-
-    }
-    return copy;
+    zmq_msg_send (&frame, zsock_resolve (output), --nbr_frames? ZMQ_SNDMORE: 0);
+    
+    return 0;
 }
 
 
@@ -524,7 +367,7 @@ zpubsub_filter_print (zpubsub_filter_t *self)
             else
                 zsys_debug ("    topic=");
             break;
-
+            
     }
 }
 
@@ -590,15 +433,14 @@ zpubsub_filter_partition (zpubsub_filter_t *self)
 }
 
 void
-zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *format, ...)
+zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *value)
 {
-    //  Format partition from provided arguments
     assert (self);
-    va_list argptr;
-    va_start (argptr, format);
-    free (self->partition);
-    self->partition = zsys_vprintf (format, argptr);
-    va_end (argptr);
+    assert (value);
+    if (value == self->partition)
+        return;
+    strncpy (self->partition, value, 255);
+    self->partition [255] = 0;
 }
 
 
@@ -613,15 +455,14 @@ zpubsub_filter_topic (zpubsub_filter_t *self)
 }
 
 void
-zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *format, ...)
+zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *value)
 {
-    //  Format topic from provided arguments
     assert (self);
-    va_list argptr;
-    va_start (argptr, format);
-    free (self->topic);
-    self->topic = zsys_vprintf (format, argptr);
-    va_end (argptr);
+    assert (value);
+    if (value == self->topic)
+        return;
+    strncpy (self->topic, value, 255);
+    self->topic [255] = 0;
 }
 
 
@@ -636,7 +477,7 @@ zpubsub_filter_test (bool verbose)
 
     //  @selftest
     //  Simple create/destroy test
-    zpubsub_filter_t *self = zpubsub_filter_new (0);
+    zpubsub_filter_t *self = zpubsub_filter_new ();
     assert (self);
     zpubsub_filter_destroy (&self);
 
@@ -651,30 +492,23 @@ zpubsub_filter_test (bool verbose)
 
     //  Encode/send/decode and verify each message type
     int instance;
-    zpubsub_filter_t *copy;
-    self = zpubsub_filter_new (ZPUBSUB_FILTER_FILTER);
-
-    //  Check that _dup works on empty message
-    copy = zpubsub_filter_dup (self);
-    assert (copy);
-    zpubsub_filter_destroy (&copy);
+    self = zpubsub_filter_new ();
+    zpubsub_filter_set_id (self, ZPUBSUB_FILTER_FILTER);
 
     zpubsub_filter_set_partition (self, "Life is short but Now lasts for ever");
     zpubsub_filter_set_topic (self, "Life is short but Now lasts for ever");
-    //  Send twice from same object
-    zpubsub_filter_send_again (self, output);
-    zpubsub_filter_send (&self, output);
+    //  Send twice
+    zpubsub_filter_send (self, output);
+    zpubsub_filter_send (self, output);
 
     for (instance = 0; instance < 2; instance++) {
-        self = zpubsub_filter_recv (input);
-        assert (self);
+        zpubsub_filter_recv (self, input);
         assert (zpubsub_filter_routing_id (self));
-
         assert (streq (zpubsub_filter_partition (self), "Life is short but Now lasts for ever"));
         assert (streq (zpubsub_filter_topic (self), "Life is short but Now lasts for ever"));
-        zpubsub_filter_destroy (&self);
     }
 
+    zpubsub_filter_destroy (&self);
     zsock_destroy (&input);
     zsock_destroy (&output);
     //  @end

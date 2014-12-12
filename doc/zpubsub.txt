@@ -1,0 +1,166 @@
+zpubsub(3)
+==========
+
+NAME
+----
+zpubsub - simple pubsub framework
+
+SYNOPSIS
+--------
+----
+//  Function to calculate port from domain id
+typedef dbyte (zpubsub_port_fn) (int domain);
+
+//  Subscribers get a callback when a sample is available
+typedef void (zpubsub_sample_fn) (const char *topic, const char *partition,
+                                  void *args, byte *sample, size_t size);
+
+//  Create a new pubsub, passing functions to use for serializing and
+//  deserializing filters.
+ZLABS_EXPORT zpubsub_t *
+    zpubsub_new (int domain, const char* partition);
+
+//  Publish a message on a given topic.
+ZLABS_EXPORT void
+    zpubsub_publish (zpubsub_t *self, const char *topic, const char *partition,
+                     byte *message, size_t size);
+
+//  Subscribe to messages on a given topic.
+ZLABS_EXPORT void
+    zpubsub_subscribe (zpubsub_t *self,
+                       const char *topic, const char *partition,
+                       void *args, zpubsub_sample_fn *sample_fn);
+
+//  Unsubscribe from messages on a given topic.
+ZLABS_EXPORT void
+    zpubsub_unsubscribe (zpubsub_t *self,
+                         const char *topic, const char *partition);
+
+//  Destroy a pubsub instance.
+ZLABS_EXPORT void
+    zpubsub_destroy (zpubsub_t **p_self);
+
+//  Probe the supplied object, and report if it looks like a zpubsub_t.
+ZLABS_EXPORT bool
+	zpubsub_is (void *self);
+
+//  Self test of this class
+ZLABS_EXPORT void
+    zpubsub_test (bool verbose);
+----
+
+DESCRIPTION
+-----------
+
+The zpubsub class provides a simple pubsub framework.
+
+
+zpubsub allows publishing of a "topic", being a message of
+a certain type, known to both the publisher of said
+message, and its subscribers. Publishers and subscribers
+operate on a specific domain (an integer id) which, in the
+context of a CZMQ zpubsub instance, translates into a specific
+TCP port on which they communicate. Messages are further filtered
+on "partition", which is a string passed when publishing a message
+or when subscribing to specific message types.
+
+zpubsub borrows some terminology from the Object Management Group
+Data Distribution Service (http://www.omg.org/hot-topics/dds.htm),
+but is in no way associated with the efforts of the OMG, neither
+does it claim to be in any way compliant with the DDS specification.
+It is, however, implemented as a simple alternative to using a full
+fledge DDS implementation to achieve the purposes intended for the
+zpubsub class.
+
+zpubsub relies heavily on the zactor and zloop implementations to
+achieve asynchronous behaviour, and uses the zbeacon to broadcast
+the presence of publishers. The basic mechanisms for publishing
+and subscribing are of course implemented by way of 0MQ PUB and
+SUB sockets.
+
+The message serialization protocol is fully up to the application.
+zpubsub accepts a blob of data for publishing and delivers the
+same blob unchanged to the subscribers. Filter data is serialized
+through a zproto-generated codec.
+
+Two examples are included in the examples/zpubsub directory.
+The simple example is implemented in pure C, with the simplest
+form of (platform-dependent) binary serialization. The protobuf
+example wraps zpubsub in a Participant class, which uses
+Google Protocol Buffers to serialize data in a portable manner.
+
+EXAMPLE
+-------
+.From zpubsub_test method
+----
+//  Create pubsub instance
+zpubsub_t * pubsub = zpubsub_new (25, NULL);
+assert (pubsub);
+s_test_msg_recvd = false;
+
+//  Subscribe to test topic
+zpubsub_subscribe (pubsub, "TestTopic", NULL, NULL, s_sample_fn);
+
+//  Sleep for 6 seconds; should have received a publisher
+//  beacon by then and connected
+zclock_sleep (6000);
+
+//  Create a test message
+test_msg_t *tmsg = (test_msg_t *) zmalloc (sizeof (test_msg_t));
+assert (tmsg);
+tmsg->hello = strdup ("Hello");
+tmsg->world = 30116;
+
+//  Serialize message
+size_t sample_size;
+byte *sample = s_serialize_message (tmsg, &sample_size);
+
+//  Publish on the test topic
+zpubsub_publish (pubsub, "TestTopic", NULL, sample, sample_size);
+zclock_sleep (1000); //  Sleeping one second after publish to make sure
+                     //  subscriber processing is finished
+
+//  Should have received the message now
+assert (s_test_msg_recvd);
+s_test_msg_recvd = false;
+
+//  Publish on different partition
+zpubsub_publish (pubsub, "TestTopic", "TestPartition", sample, sample_size);
+zclock_sleep (1000);
+
+//  Should not receive this message
+assert (!s_test_msg_recvd);
+s_test_msg_recvd = false;
+
+//  Publish on another topic
+zpubsub_publish (pubsub, "TestTopic2", NULL, sample, sample_size);
+zclock_sleep (1000);
+
+//  Should not receive this message
+assert (!s_test_msg_recvd);
+s_test_msg_recvd = false;
+
+//  Publish on the test topic again
+zpubsub_publish (pubsub, "TestTopic", NULL, sample, sample_size);
+zclock_sleep (1000);
+
+//  Should receive this message
+assert (s_test_msg_recvd);
+s_test_msg_recvd = false;
+
+//  Unsubscribe and publish again
+zpubsub_unsubscribe (pubsub, "TestTopic", NULL);
+zpubsub_publish (pubsub, "TestTopic", NULL, sample, sample_size);
+zclock_sleep (1000);
+
+//  Should not receive this message
+assert (!s_test_msg_recvd);
+
+//  Destroy pubsub instance
+zpubsub_destroy (&pubsub);
+assert (pubsub == NULL);
+
+free (tmsg->hello);
+free (tmsg);
+free (sample);
+----
