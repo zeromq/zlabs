@@ -52,7 +52,7 @@
 @end
 */
 
-#include "../include/zlabs.h"
+#include "../include/zlabs_library.h"
 
 //  zpubsub_t instances always have this tag as the first 4 octets of
 //  their data, which lets us do runtime object typing & validation.
@@ -67,6 +67,7 @@ struct _zpubsub_t {
     zsock_t *pub_socket;   //  The publisher socket
     zactor_t *pub_beacon;  //  The publisher beacon
     zactor_t *sub_actor;   //  Actor for asynchronous subscriber management
+    zpipe_t *pipe;
 };
 
 
@@ -105,39 +106,24 @@ typedef struct {
     char *default_partition;
     zhash_t *connections;
     zhash_t *subscribers;
+    zpipe_t *pipe;
 } sub_reactor_data_t;
-
-
-//  --------------------------------------------------------------------------
-//  Buffer destructor function (zhash_set_destructor will not accept zstr_free)
-
-static void
-s_free_buffer (void **buffer)
-{
-    assert (buffer);
-    free (*buffer);
-    *buffer = NULL;
-}
 
 
 //  --------------------------------------------------------------------------
 //  Subscriber destructor function
 
 static void
-s_free_subscriber (void **subscriber)
+s_free_subscriber (void *subscriber)
 {
-    assert (subscriber);
-
-    if (*subscriber) {
-        sub_data_t *sub = (sub_data_t *) *subscriber;
+    if (subscriber) {
+        sub_data_t *sub = (sub_data_t *) subscriber;
 
         free (sub->partition);
         free (sub->topic);
         free (sub->key);
         free (sub->sample_function);
         free (sub);
-
-        *subscriber = NULL;
     }
 }
 
@@ -210,13 +196,21 @@ s_generate_key (const char *topic, const char *partition)
 //  Encode filter
 
 static zframe_t *
-s_encode_filter (const char *topic, const char *partition)
+s_encode_filter (zpipe_t *pipe, const char *topic, const char *partition)
 {
-    zmsg_t *msg = zpubsub_filter_encode_filter (partition, topic);
-    assert (msg);
+    assert (pipe);
 
-    zframe_t *encoded_filter = zmsg_pop (msg);
-    zmsg_destroy (&msg);
+    zpubsub_filter_t *filter = zpubsub_filter_new ();
+    zpubsub_filter_set_id (filter, ZPUBSUB_FILTER_FILTER);
+    zpubsub_filter_set_topic (filter, topic);
+    zpubsub_filter_set_partition (filter, partition);
+
+    int rc = zpubsub_filter_send (filter, zpipe_write_socket (pipe));
+    assert (rc == 0);
+    zpubsub_filter_destroy (&filter);
+    zframe_t *encoded_filter;
+    rc = zsock_recv (zpipe_read_socket (pipe), "f", &encoded_filter);
+    assert (rc == 0);
 
     return encoded_filter;
 }
@@ -226,15 +220,16 @@ s_encode_filter (const char *topic, const char *partition)
 //  Decode filter
 
 static zpubsub_filter_t *
-s_decode_filter (zframe_t **encoded_filter)
+s_decode_filter (zpipe_t *pipe, zframe_t *encoded_filter)
 {
+    assert (pipe);
     assert (encoded_filter);
 
-    zmsg_t *msg = zmsg_new ();
-    assert (msg);
-
-    zmsg_append (msg, encoded_filter);
-    zpubsub_filter_t *filter = zpubsub_filter_decode (&msg);
+    int rc = zpipe_write (pipe, "f", encoded_filter);
+    assert (rc == 0);
+    zpubsub_filter_t *filter = zpubsub_filter_new ();
+    rc = zpubsub_filter_recv (filter, zpipe_read_socket (pipe));
+    assert (rc == 0);
 
     return filter;
 }
@@ -270,9 +265,10 @@ s_sub_beacon_fn (zloop_t *loop, zmq_pollitem_t *item, void *args)
                 zsock_connect(reactor_data->sub_socket, "tcp://%s:%d", address,
                               reactor_data->port);
 
-            if (rc == 0)
-                zhash_insert (reactor_data->connections, address,
-                              strdup (address));
+            if (rc == 0) {
+                zhash_insert (reactor_data->connections, address, strdup (address));
+                zhash_freefn (reactor_data->connections, address, free);
+            }
         }
 
         free (address);
@@ -318,8 +314,9 @@ s_sub_ctrl_fn (zloop_t *loop, zsock_t *reader, void *args)
         assert (sub->sample_function->sample_fn);
 
         zhash_update (reactor_data->subscribers, sub->key, sub);
+        zhash_freefn (reactor_data->subscribers, sub->key, s_free_subscriber);
 
-        zframe_t *encoded_filter = s_encode_filter (sub->topic, sub->partition);
+        zframe_t *encoded_filter = s_encode_filter (reactor_data->pipe, sub->topic, sub->partition);
         assert (encoded_filter);
 
         rc = zmq_setsockopt (zsock_resolve (reactor_data->sub_socket),
@@ -343,7 +340,7 @@ s_sub_ctrl_fn (zloop_t *loop, zsock_t *reader, void *args)
         sub_data_t * sub = (sub_data_t *) zhash_lookup (reactor_data->subscribers, key);
 
         if (sub) {
-            zframe_t *encoded_filter = s_encode_filter (topic, partition);
+            zframe_t *encoded_filter = s_encode_filter (reactor_data->pipe, topic, partition);
             assert (encoded_filter);
 
             rc = zmq_setsockopt (zsock_resolve (reactor_data->sub_socket),
@@ -380,8 +377,9 @@ s_sub_sample_fn (zloop_t *loop, zsock_t *reader, void *args)
     int rc = zsock_recv (reader, "ff", &filter_frame, &message_frame);
     assert (rc == 0);
 
-    zpubsub_filter_t *filter = s_decode_filter (&filter_frame);
+    zpubsub_filter_t *filter = s_decode_filter (reactor_data->pipe, filter_frame);
     assert (filter);
+    zframe_destroy (&filter_frame);
 
     const char *topic = zpubsub_filter_topic (filter);
     assert (topic);
@@ -434,10 +432,10 @@ s_sub_actor (zsock_t *pipe, void *args)
     reactor_data.default_partition = strdup (actor_data->default_partition);
     reactor_data.connections = zhash_new ();
     assert (reactor_data.connections);
-    zhash_set_destructor (reactor_data.connections, s_free_buffer);
     reactor_data.subscribers = zhash_new ();
     assert (reactor_data.subscribers);
-    zhash_set_destructor (reactor_data.subscribers, s_free_subscriber);
+    reactor_data.pipe = zpipe_new ();
+    assert (reactor_data.pipe);
 
     zloop_t *sub_reactor = zloop_new ();
     zloop_reader (sub_reactor, pipe, s_sub_ctrl_fn, &reactor_data);
@@ -465,6 +463,7 @@ s_sub_actor (zsock_t *pipe, void *args)
     zsock_destroy (&sub_socket);
     zhash_destroy (&(reactor_data.connections));
     zhash_destroy (&(reactor_data.subscribers));
+    zpipe_destroy (&(reactor_data.pipe));
     free (reactor_data.default_partition);
     free (actor_data->default_partition);
     free (actor_data);
@@ -492,6 +491,9 @@ zpubsub_new (int domain, const char* partition)
     zpubsub_port_fn *port_fn = zpubsub_port_function ();
     if (port_fn == NULL)
         port_fn = s_get_port;
+
+    self->pipe = zpipe_new ();
+    assert (self->pipe);
 
     //  Bind pub socket
     self->pub_socket = zsock_new (ZMQ_PUB);
@@ -532,6 +534,7 @@ zpubsub_destroy (zpubsub_t **self_p)
         zactor_destroy (&self->pub_beacon);
         zactor_destroy (&self->sub_actor);
         zsock_destroy (&self->pub_socket);
+        zpipe_destroy (&self->pipe);
 
         free (self->partition);
         self->tag = 0xDeadBeef;
@@ -555,7 +558,7 @@ zpubsub_publish (zpubsub_t *self, const char *topic, const char *partition,
     zmsg_t *msg = zmsg_new ();
     assert (msg);
 
-    zframe_t *filter = s_encode_filter (topic, partition? partition: self->partition);
+    zframe_t *filter = s_encode_filter (self->pipe, topic, partition? partition: self->partition);
     assert (filter);
 
     zmsg_prepend (msg, &filter);
@@ -732,8 +735,7 @@ zpubsub_test (bool verbose)
     sub->key = strdup ("TestKey");
     sub->sample_function =
         (sample_function_t *) zmalloc (sizeof (sample_function_t));
-    s_free_subscriber ((void **) &sub);
-    assert (sub == NULL);
+    s_free_subscriber (sub);
     if (verbose)
         zsys_info ("s_free_subscriber OK");
 
@@ -775,10 +777,11 @@ zpubsub_test (bool verbose)
         zsys_info ("s_generate_key OK");
 
 
+    zpipe_t *pipe = zpipe_new ();
     //  s_encode_filter unit test
     if (verbose)
         zsys_info ("s_encode_filter...");
-    zframe_t *filter_frame = s_encode_filter ("TestTopic", "TestPartition");
+    zframe_t *filter_frame = s_encode_filter (pipe, "TestTopic", "TestPartition");
     assert (filter_frame);
     assert (zframe_data (filter_frame));
     assert (zframe_size (filter_frame) > 0);
@@ -789,13 +792,14 @@ zpubsub_test (bool verbose)
     //  s_decode_filter unit test
     if (verbose)
         zsys_info ("s_decode_filter...");
-    zpubsub_filter_t *filter = s_decode_filter (&filter_frame);
+    zpubsub_filter_t *filter = s_decode_filter (pipe, filter_frame);
     assert (filter);
     assert (streq (zpubsub_filter_partition (filter), "TestPartition"));
     assert (streq (zpubsub_filter_topic (filter), "TestTopic"));
     zpubsub_filter_destroy (&filter);
     if (verbose)
         zsys_info ("s_decode_filter OK");
+    zpipe_destroy (&pipe);
 
 
     //  zpubsub system test

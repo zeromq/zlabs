@@ -1,0 +1,58 @@
+#### zpipe - Encapsulates a pair of sockets connected by inproc.
+
+zpipe - Encapsulates a pair of sockets connected by inproc.
+
+Please add @discuss section in ../src/zpipe.c.
+
+This is the class interface:
+
+    //  Create a new zpipe
+    ZLABS_EXPORT zpipe_t *
+        zpipe_new ();
+    
+    //  Destroy the zpipe
+    ZLABS_EXPORT void
+        zpipe_destroy (zpipe_t **self_p);
+    
+    //  Get write socket
+    ZLABS_EXPORT zsock_t *
+        zpipe_write_socket (zpipe_t *self);
+    
+    //  Get read socket
+    ZLABS_EXPORT zsock_t *
+        zpipe_read_socket (zpipe_t *self);
+    
+    //  Write to pipe
+    ZLABS_EXPORT int
+        zpipe_write (zpipe_t *self, const char *picture, ...);
+    
+    //  Read from pipe
+    ZLABS_EXPORT int
+        zpipe_read (zpipe_t *self, const char *picture, ...);
+    
+    //  Print properties of object
+    ZLABS_EXPORT void
+        zpipe_print (zpipe_t *self);
+    
+    //  Self test of this class
+    ZLABS_EXPORT int
+        zpipe_test (bool verbose);
+
+This is the class self test code:
+
+    zpipe_t *self = zpipe_new (NULL);
+    assert (self);
+    
+    if (verbose)
+        zpipe_print (self);
+    
+    int rc = zpipe_write (self, "s", "Test");
+    assert (rc == 0);
+    char *msg;
+    rc = zpipe_read (self, "s", &msg);
+    assert (rc == 0);
+    assert (msg != NULL);
+    assert (streq (msg, "Test"));
+    
+    zpipe_destroy (&self);
+

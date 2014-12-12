@@ -1,24 +1,29 @@
 <project
     name = "zlabs"
     description = "Labs project for various zmq stuff."
-    script = "project.gsl"
-    email = "zeromq-dev@lists.zeromq.org" 
+    script = "zproject.gsl"
+    email = "zeromq-dev@lists.zeromq.org"
     >
 
     <include filename = "license.xml" />
 
     <version major = "1" minor = "0" patch = "0" />
 
-    <dependency name="zmq" header="zmq.h" test="zmq_init" />
-    <dependency name="czmq" header="czmq.h" test="zctx_test" />
+    <use project="zmq" />
+    <use project="czmq" />
 
-    <!-- 
+    <!--
          <header name = "zlabs" />
     -->
 
     <class name = "zpubsub" />
     <class name = "zpubsub_option" />
+    <class name = "zpipe" />
+    <!--
+        ztimeout does not compile in its current form; removing
+        from build, but keeping code for now.
     <class name = "ztimeout" />
+    -->
 
     <!-- Models that we build using GSL -->
     <model name = "zpubsub_filter" />

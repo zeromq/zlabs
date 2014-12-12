@@ -1,0 +1,97 @@
+#### zpubsub_filter - zpubsub protocol
+
+zpubsub_filter - zpubsub protocol
+
+Please add @discuss section in ../src/zpubsub_filter.c.
+
+This is the class interface:
+
+    //  Create a new empty zpubsub_filter
+    zpubsub_filter_t *
+        zpubsub_filter_new (void);
+    
+    //  Destroy a zpubsub_filter instance
+    void
+        zpubsub_filter_destroy (zpubsub_filter_t **self_p);
+    
+    //  Receive a zpubsub_filter from the socket. Returns 0 if OK, -1 if
+    //  there was an error. Blocks if there is no message waiting.
+    int
+        zpubsub_filter_recv (zpubsub_filter_t *self, zsock_t *input);
+    
+    //  Send the zpubsub_filter to the output socket, does not destroy it
+    int
+        zpubsub_filter_send (zpubsub_filter_t *self, zsock_t *output);
+        
+    //  Print contents of message to stdout
+    void
+        zpubsub_filter_print (zpubsub_filter_t *self);
+    
+    //  Get/set the message routing id
+    zframe_t *
+        zpubsub_filter_routing_id (zpubsub_filter_t *self);
+    void
+        zpubsub_filter_set_routing_id (zpubsub_filter_t *self, zframe_t *routing_id);
+    
+    //  Get the zpubsub_filter id and printable command
+    int
+        zpubsub_filter_id (zpubsub_filter_t *self);
+    void
+        zpubsub_filter_set_id (zpubsub_filter_t *self, int id);
+    const char *
+        zpubsub_filter_command (zpubsub_filter_t *self);
+    
+    //  Get/set the partition field
+    const char *
+        zpubsub_filter_partition (zpubsub_filter_t *self);
+    void
+        zpubsub_filter_set_partition (zpubsub_filter_t *self, const char *value);
+    
+    //  Get/set the topic field
+    const char *
+        zpubsub_filter_topic (zpubsub_filter_t *self);
+    void
+        zpubsub_filter_set_topic (zpubsub_filter_t *self, const char *value);
+    
+    //  Self test of this class
+    int
+        zpubsub_filter_test (bool verbose);
+
+This is the class self test code:
+
+    //  Simple create/destroy test
+    zpubsub_filter_t *self = zpubsub_filter_new ();
+    assert (self);
+    zpubsub_filter_destroy (&self);
+    
+    //  Create pair of sockets we can send through
+    zsock_t *input = zsock_new (ZMQ_ROUTER);
+    assert (input);
+    zsock_connect (input, "inproc://selftest-zpubsub_filter");
+    
+    zsock_t *output = zsock_new (ZMQ_DEALER);
+    assert (output);
+    zsock_bind (output, "inproc://selftest-zpubsub_filter");
+    
+    //  Encode/send/decode and verify each message type
+    int instance;
+    self = zpubsub_filter_new ();
+    zpubsub_filter_set_id (self, ZPUBSUB_FILTER_FILTER);
+    
+    zpubsub_filter_set_partition (self, "Life is short but Now lasts for ever");
+    zpubsub_filter_set_topic (self, "Life is short but Now lasts for ever");
+    //  Send twice
+    zpubsub_filter_send (self, output);
+    zpubsub_filter_send (self, output);
+    
+    for (instance = 0; instance < 2; instance++) {
+        zpubsub_filter_recv (self, input);
+        assert (zpubsub_filter_routing_id (self));
+        assert (streq (zpubsub_filter_partition (self), "Life is short but Now lasts for ever"));
+        assert (streq (zpubsub_filter_topic (self), "Life is short but Now lasts for ever"));
+    }
+    
+    zpubsub_filter_destroy (&self);
+    zsock_destroy (&input);
+    zsock_destroy (&output);
+
