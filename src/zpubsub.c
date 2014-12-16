@@ -796,6 +796,7 @@ zpubsub_test (bool verbose)
     assert (filter);
     assert (streq (zpubsub_filter_partition (filter), "TestPartition"));
     assert (streq (zpubsub_filter_topic (filter), "TestTopic"));
+    zframe_destroy (&filter_frame);
     zpubsub_filter_destroy (&filter);
     if (verbose)
         zsys_info ("s_decode_filter OK");

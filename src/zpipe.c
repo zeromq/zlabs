@@ -40,8 +40,10 @@ zpipe_new ()
 
     //  Initialize properties
     zuuid_t *uuid = zuuid_new ();
-    char *str = zsys_sprintf ("inproc://%s", zuuid_formatted_str (uuid));
+    char *uuid_str = zuuid_formatted_str (uuid);
+    char *str = zsys_sprintf ("inproc://%s", uuid_str);
     strncpy (self->endpoint, str, 255);
+    free (uuid_str);
     free (str);
     zuuid_destroy (&uuid);
 
@@ -170,6 +172,7 @@ zpipe_test (bool verbose)
     assert (rc == 0);
     assert (msg != NULL);
     assert (streq (msg, "Test"));
+    free (msg);
 
     zpipe_destroy (&self);
     //  @end
