@@ -23,10 +23,10 @@ Classes
 
 zlabs provides the following classes:
 
-* linkzlabs:zpubsub[3] - simple pubsub framework
-* linkzlabs:zpubsub_filter[3] - zpubsub protocol
-* linkzlabs:zpubsub_option[3] - options for the zpubsub class
-* linkzlabs:zpipe[3] - encapsulates a pair of sockets connected by inproc
+* linkfzlabs:zpubsub[3] - simple pubsub framework
+* linkfzlabs:zpubsub_filter[3] - zpubsub protocol
+* linkfzlabs:zpubsub_option[3] - options for the zpubsub class
+* linkfzlabs:zpipe[3] - encapsulates a pair of sockets connected by inproc
 
 Scope and Goals
 ~~~~~~~~~~~~~~~
@@ -96,4 +96,4 @@ Include `zlabs.h` in your application and link with zlabs. Here is a typical gcc
 Coding Style
 ~~~~~~~~~~~~
 
-Please read the corresponding sections of the linkzlabs:czmq[7] documentation. zlabs aims to be fully compliant with the CLASS model and the guidelines for CZMQ.
+Please read the corresponding sections of the linkfzlabs:czmq[7] documentation. zlabs aims to be fully compliant with the CLASS model and the guidelines for CZMQ.
