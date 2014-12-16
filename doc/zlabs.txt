@@ -5,3 +5,95 @@ NAME
 ----
 zlabs - Project for experimenting with CZMQ
 
+
+SYNOPSIS
+--------
+----
+#include <zlabs.h>
+
+cc ['flags'] 'files' -lzmq -lczmq -lzlabs ['libraries']
+----
+
+
+DESCRIPTION
+-----------
+
+Classes
+~~~~~~~
+
+zlabs provides the following classes:
+
+* linkzlabs:zpubsub[3] - simple pubsub framework
+* linkzlabs:zpubsub_filter[3] - zpubsub protocol
+* linkzlabs:zpubsub_option[3] - options for the zpubsub class
+* linkzlabs:zpipe[3] - encapsulates a pair of sockets connected by inproc
+
+Scope and Goals
+~~~~~~~~~~~~~~~
+
+zlabs has these goals:
+
+* To provide a testing environment for CZMQ concepts.
+* To provide a space for development of more sophisticated API semantics without littering the CZMQ code base.
+* To package such experiments in a complete, portable and redistributable manner.
+
+Ownership and License
+~~~~~~~~~~~~~~~~~~~~~
+
+zlabs is maintained by the ZeroMQ community at github.com/zeromq. Its other authors and contributors are listed in the AUTHORS file.
+
+The contributors are listed in AUTHORS. This project uses the MPL v2 license, see LICENSE.
+
+Contributing
+~~~~~~~~~~~~
+
+To submit an issue use the issue tracker at http://github.com/zeromq/zlabs/issues. All discussion happens on the  zeromq-dev list or #zeromq IRC channel at irc.freenode.net.
+
+The proper way to submit patches is to clone this repository, make your changes, and use git to create a patch or a pull request. See http://www.zeromq.org/docs:contributing. All contributors are listed in AUTHORS.
+
+All classes are maintained by a single person, who is the responsible editor for that class and who is named in the header as such. This is usually the originator of the class. When several people collaborate on a class, one single person is always the lead maintainer and the one to blame when it breaks.
+
+The general rule is, if you contribute code to zlabs you must be willing to maintain it as long as there are users of it. Code with no active maintainer will in general be deprecated and/or removed.
+
+USING zlabs
+----------
+
+Building and Installing
+~~~~~~~~~~~~~~~~~~~~~~~
+
+zlabs uses zproject for packaging. This means that the project.xml file located in the zlabs root directory is the definitive definition for all supported build environments.
+To build from git, regardless of your platform, you WILL need to have imatix/gsl installed, and you WILL need a shell able to execute the included generate.sh script.
+----
+    git clone git://github.com/zeromq/zlabs.git
+    cd zlabs
+    ./generate.sh
+----
+If using autotools you will need the pkg-config, libtool, and autoreconf packages. Set the LD_LIBRARY_PATH to /usr/local/libs unless you install elsewhere. Run the following:
+----
+    ./configure
+    make all
+    make check
+    sudo make install
+    sudo ldconfig
+----
+If using Visual Studio, open the corresponding solution file under ./build/msvc. For other build environments please consult the appropriate documentation.
+
+After building, you can run the zlabs selftests:
+----
+    cd src
+    ./zlabs_selftest
+----
+
+Linking with an Application
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Include `zlabs.h` in your application and link with zlabs. Here is a typical gcc link command:
+----
+    gcc myapp.c -o myapp -lzmq -lczmq -lzlabs
+----
+
+
+Coding Style
+~~~~~~~~~~~~
+
+Please read the corresponding sections of the linkzlabs:czmq[7] documentation. zlabs aims to be fully compliant with the CLASS model and the guidelines for CZMQ.
