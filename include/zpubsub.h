@@ -26,8 +26,7 @@ typedef dbyte (zpubsub_port_fn) (int domain);
 typedef void (zpubsub_sample_fn) (const char *topic, const char *partition,
                                   void *args, byte *sample, size_t size);
 
-//  Create a new pubsub, passing functions to use for serializing and
-//  deserializing filters.
+//  Create a new pubsub.
 ZLABS_EXPORT zpubsub_t *
     zpubsub_new (int domain, const char* partition);
 
